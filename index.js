@@ -11,6 +11,7 @@ const port = process.env.PORT || 3131
 const screenshot = require('./screenshot')
 
 const Crawler = require('./database/crawlerModel')
+const ensure = require('./crawlers/ensure')
 
 const MONGO_URL = process.env.MONGODB_URL
 
@@ -22,8 +23,8 @@ app.use(express.json())
 app.use(logger("dev"))
 
 app.get('/', async (req, res) => {
-  let crawler = await Crawler.find()
-  res.status(200).json(crawler)
+  let picks = await ensure()
+  res.status(200).json(picks)
 })
 
 app.post('/bat', async (req, res) => {
