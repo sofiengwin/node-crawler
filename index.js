@@ -22,8 +22,9 @@ mongoose.connect(MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 app.use(express.json())
 app.use(logger("dev"))
 
-app.get('/', async (req, res) => {
+app.get('/', async (_req, res) => {
   let picks = await ensure()
+
   res.status(200).json(picks)
 })
 
