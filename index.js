@@ -2,6 +2,12 @@ const express = require('express')
 const mongoose = require('mongoose')
 const logger = require('morgan')
 const dotenv = require('dotenv')
+const moment = require('moment');
+const cron = require('node-cron');
+const {crawler} = require('./crawlers')
+const log = console.log
+
+const today = moment().startOf('day')
 
 dotenv.config()
 
@@ -12,6 +18,7 @@ const screenshot = require('./screenshot')
 
 const Crawler = require('./database/crawlerModel')
 const ensure = require('./crawlers/ensure')
+const {save, find, update} = require('./testdb')
 
 const MONGO_URL = process.env.MONGODB_URL
 
@@ -22,20 +29,21 @@ mongoose.connect(MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 app.use(express.json())
 app.use(logger("dev"))
 
-app.get('/', async (_req, res) => {
-  let picks = await ensure()
+const task = cron.schedule('* * * * *', () => {
+  log('running a task every minute', {crawler});
+  crawler();
+});
 
-  res.status(200).json(picks)
+task.start();
+
+console.log({today}, today.toDate())
+app.get('/', async (_req, res) => {
+  let pick = await ensure()
+  // const pick = await Crawler.find()
+  res.status(200).json(pick)
 })
 
 app.post('/bat', async (req, res) => {
-  const data = {
-    homeTeam: "Manchester United",
-    awayTeam: "Chelsea FC",
-    bet: "Man.u",
-    fixtureId: 1
-  }
-
   try {
     let crawler = new Crawler(req.body)
     await crawler.save()

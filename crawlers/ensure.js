@@ -10,9 +10,7 @@ module.exports = function () {
       const page = await browser.newPage()
     
       await page.goto('https://www.betensured.com/', {
-        waitUntil: 'load',
-        // Remove the timeout
-        timeout: 0
+        waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
       });
       
       const ensuredPicks = await page.evaluate(() => {
@@ -21,10 +19,8 @@ module.exports = function () {
         for (let i = 0; i < count; i++) {
             let pick = {}
             if (document.querySelectorAll("#today table tr")[i].children[0].textContent != '') {
-                pick.league = document.querySelectorAll("#today table tr")[i].children[0].textContent
                 pick.fixture = document.querySelectorAll("#today table tr")[i].children[1].textContent
                 pick.tip = document.querySelectorAll("#today table tr")[i].children[2].children[0].textContent
-                pick.odd = document.querySelectorAll("#today table tr")[i].children[2].children[1].textContent
                 picks.push(pick)
             }
         }
@@ -36,8 +32,19 @@ module.exports = function () {
       await page.waitFor(1000)
 
       await browser.close()
-
-      resolve(ensuredPicks)
+      console.log({ensuredPicks})
+      resolve(ensuredPicks.map((pick) => normalizePick(pick)))
     })()
   })
+}
+
+const normalizePick = (pick) => {
+  const [homeTeam, awayTeam] = pick.fixture.split(/vs/);
+
+  return {
+    homeTeam,
+    awayTeam,
+    bet: pick.tip,
+    provider: 'Betensured',
+  }
 }
