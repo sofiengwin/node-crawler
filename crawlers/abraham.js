@@ -10,31 +10,27 @@ module.exports = function () {
         })
         const page = await browser.newPage()
       
-        await page.goto('https://www.betensured.com/', {
+        await page.goto('https://www.abrahamtips.com/', {
           waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
         });
-        
-        const ensuredPicks = await page.evaluate(() => {
-          let count = document.querySelectorAll("#today table tr").length;
-          const picks = []
-          for (let i = 0; i < count; i++) {
+   
+        const abrahamTips = await page.evaluate(() => {
+          let count = document.querySelectorAll('.entry-content tr').length;
+          let picks = []
+          for (let i = 1; i < count; i++) {
               let pick = {}
-              if (document.querySelectorAll("#today table tr")[i].children[0].textContent != '') {
-                  pick.fixture = document.querySelectorAll("#today table tr")[i].children[1].textContent
-                  pick.tip = document.querySelectorAll("#today table tr")[i].children[2].children[0].textContent
-                  picks.push(pick)
-              }
+              pick.fixture = document.querySelectorAll('.entry-content tr')[i].children[1].innerText;
+              pick.tip = document.querySelectorAll('.entry-content tr')[i].children[2].innerText;
+              picks.push(pick);
           }
-        
-        
           return picks;
-        });
-  
+        })
+      
         await page.waitFor(1000)
   
         await browser.close()
   
-        resolve(ensuredPicks.map((pick) => normalizePick(pick)))
+        resolve(abrahamTips.map((pick) => normalizePick(pick)))
       } catch (error) {
         console.log({error});
       }

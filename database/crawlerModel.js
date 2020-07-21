@@ -19,7 +19,8 @@ const CrawlerSchema = mongoose.Schema({
     createdAt: {
       type: Date,
       default: Date.now,
-    }
+    },
+    accuracy: String
 })
 
 module.exports = mongoose.model("crawler", CrawlerSchema)
