@@ -10,6 +10,7 @@ const confirmBets = require('./confirmBets')
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
+const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
 
 const today = moment().startOf('day')
 
@@ -50,6 +51,8 @@ const sites = [
 log({ensure})
 const crawler = () => {
   sites.forEach(async ({provider, crawlerImplementation}) => {
+    await postStartedCrawling(provider)
+
     log({provider, crawlerImplementation, ensure})
     const todayTipsByProvider = await Crawler.find({provider: provider, createdAt: {$gte: today.toDate()}});
     console.log({todayTipsByProvider})
@@ -58,9 +61,10 @@ const crawler = () => {
       return;
     }
 
-    const tips = await crawlerImplementation();
-    // console.log({tips})
-    await saveTips(tips, provider);
+    // const tips = await crawlerImplementation();
+    // // console.log({tips})
+    // await saveTips(tips, provider);
+    await postSuccess(provider, 10);
   })
 }
 

@@ -29,7 +29,7 @@ mongoose.connect(MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 app.use(express.json())
 app.use(logger("dev"))
 
-const task = cron.schedule('*/10 * * * *', () => {
+const task = cron.schedule('0 /3 * * *', () => {
   log('running a task every minute', {crawler});
   crawler();
 });
