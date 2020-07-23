@@ -1,6 +1,6 @@
 const { WebClient } = require('@slack/web-api');
 
-token = "xoxb-1255069385634-1255420246771-GBEV6iBUjRg86qXKfIaC24ET"
+token = process.env.SLACK_TOKEN
 
 const web = new WebClient(token);
 
