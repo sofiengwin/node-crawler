@@ -4,7 +4,7 @@ const logger = require('morgan')
 const dotenv = require('dotenv')
 const moment = require('moment');
 const cron = require('node-cron');
-const {crawler} = require('./crawlers')
+const {crawler} = require('./crawlers');
 const log = console.log
 
 const today = moment().startOf('day')
@@ -18,7 +18,8 @@ const screenshot = require('./screenshot')
 
 const Crawler = require('./database/crawlerModel')
 const ensure = require('./crawlers/ensure')
-const {save, find, update} = require('./testdb')
+const {save, find, update} = require('./testdb');
+const normalizer = require('./normalizer');
 
 const MONGO_URL = process.env.MONGODB_URL
 
@@ -29,13 +30,6 @@ mongoose.connect(MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 app.use(express.json())
 app.use(logger("dev"))
 
-const task = cron.schedule('0 */3 * * *', () => {
-  log('running a task every minute', {crawler});
-  crawler();
-});
-
-task.start();
-
 console.log({today}, today.toDate())
 app.get('/', async (_req, res) => {
   // let pick = await ensure()
@@ -44,26 +38,24 @@ app.get('/', async (_req, res) => {
   res.status(200).json(pick)
 })
 
-app.post('/bat', async (req, res) => {
+app.get('/crawl', async (req, res) => {
   try {
-    let crawler = new Crawler(req.body)
-    await crawler.save()
+    crawler();
 
-    res.json(crawler)
+    res.json({message: 'Started Crawler service'})
   } catch (error) {
     res.json({error})
   }
+});
 
-})
+app.get('/normalizr', async (req, res) => {
+  try {
+    normalizer();
 
-app.get('/screenshot', (req, res) => {
-  const url = req.query.url;
-  (async () => {
-    const buffer = await screenshot(url)
-    res.setHeader('Content-Disposition', 'attachment; filename="screenshot.png"')
-    res.setHeader('Content-Type', 'image/png')
-    res.send(buffer)
-  })()
-})
+    res.json({message: 'Started Normalizr service'})
+  } catch (error) {
+    res.json({error})
+  }
+});
 
 app.listen(port, () => console.log(`app listening on port ${port}!`))
