@@ -1,13 +1,14 @@
 const axios = require('axios');
 
-const RAPID_API_BASE = 'https://api-football-v1.p.rapidapi.com/v2'
+const FOOTBALL_API_BASE = process.env.FOOTBALL_API_BASE
+const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY
 
 const rapidApiClient = (endpoint) => {
-  return axios.get(RAPID_API_BASE + endpoint, {
+  return axios.get(FOOTBALL_API_BASE + endpoint, {
       headers: {
         'Content-Type': 'application/json',
         'X-RapidAPI-Host': 'api-football-v1.p.rapidapi.com',
-        'X-RapidAPI-Key': '7850c93c7amshce44d177e4d57e3p18c434jsn758783b07818',
+        'X-RapidAPI-Key': FOOTBALL_API_KEY,
       }
     }
   )

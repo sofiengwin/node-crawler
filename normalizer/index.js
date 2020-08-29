@@ -1,13 +1,7 @@
 const rapidClient = require('./client');
 const rapidApiClient = require('./client');
 const Crawler = require('../database/crawlerModel')
-const mongoose = require("mongoose")
-
-const MONGO_URL = "mongodb+srv://bat:batcrawler@bat.cvu6c.mongodb.net/bat?retryWrites=true&w=majority"
-
-mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-	.then(() => console.log("Connected to database!!!"))
-	.catch(err => console.log(err))
+const mongoose = require("mongoose");
 
 // const teamsObj = { homeTeam: "Sevilla", awayTeam: "Wolves"}
 const normalize = async (obj) => {
@@ -107,15 +101,13 @@ const updateTips = async (targetFixture, obj) => {
 	})
 }
 
-getFromDb().then(res => {
-	// console.log(res);
-	res.forEach(obj => {
-		normalize(obj);
+
+
+module.exports = () => {
+	getFromDb().then(res => {
+		// console.log(res);
+		res.forEach(obj => {
+			normalize(obj);
+		});
 	});
-})
-
-// const clearDB = async () => {
-// 	Crawler.collection.deleteMany()
-// }
-
-// clearDB()
+}
