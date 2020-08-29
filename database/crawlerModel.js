@@ -12,6 +12,8 @@ const CrawlerSchema = mongoose.Schema({
     fixtureId: String,
     consumedAt: {
       type: Date,
+      default: null,
+
     },
     normalisedAt: Date,
     eventTimestamp: Date,
