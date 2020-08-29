@@ -11,6 +11,7 @@ const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
 const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
+const normalizr = require('../normalizer');
 
 const today = moment().startOf('day')
 
@@ -61,10 +62,11 @@ const crawler = () => {
       return;
     }
 
-    // const tips = await crawlerImplementation();
-    // // console.log({tips})
-    // await saveTips(tips, provider);
+    const tips = await crawlerImplementation();
+    // console.log({tips})
+    await saveTips(tips, provider);
     await postSuccess(provider, 10);
+    normalizr();
   })
 }
 
