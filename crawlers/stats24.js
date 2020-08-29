@@ -35,6 +35,7 @@ module.exports = function () {
   
         resolve(stats24Picks.map((pick) => normalizePick(pick)))
       } catch (error) {
+        Sentry.captureException(error);
         browser.close();
         console.log({error});
       }

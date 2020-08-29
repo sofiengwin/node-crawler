@@ -33,6 +33,8 @@ module.exports = function () {
   
         resolve(betadvicePicks.map((pick) => normalizePick(pick)))
       } catch (error) {
+        Sentry.captureException(error);
+        browser.close();
         console.log({error});
       }
     })()

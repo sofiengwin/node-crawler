@@ -32,6 +32,8 @@ module.exports = function () {
   
         resolve(abrahamTips.map((pick) => normalizePick(pick)))
       } catch (error) {
+        Sentry.captureException(error);
+        browser.close();
         console.log({error});
       }
     })()

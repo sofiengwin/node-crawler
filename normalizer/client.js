@@ -20,7 +20,8 @@ const rapidApiClient = (endpoint) => {
       return response.data.api;
     })
     .catch(error => {
-        console.log(error);
+      Sentry.captureException(error);
+      console.log(error);
     })
 }
 

@@ -49,7 +49,7 @@ const sites = [
       crawlerImplementation: confirmBets,
     },
 ]
-log({ensure})
+
 const crawler = () => {
   sites.forEach(async ({provider, crawlerImplementation}) => {
     await postStartedCrawling(provider)
@@ -63,9 +63,9 @@ const crawler = () => {
     }
 
     const tips = await crawlerImplementation();
-    // console.log({tips})
+
     await saveTips(tips, provider);
-    await postSuccess(provider, 10);
+    await postSuccess(provider, tips.length);
     normalizr();
   })
 }
