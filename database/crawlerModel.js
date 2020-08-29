@@ -20,7 +20,8 @@ const CrawlerSchema = mongoose.Schema({
       type: Date,
       default: Date.now,
     },
-    accuracy: String
+    accuracy: String,
+    outcome: String,
 })
 
 module.exports = mongoose.model("crawler", CrawlerSchema)
