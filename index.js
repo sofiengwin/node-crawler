@@ -29,18 +29,11 @@ mongoose.connect(MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 app.use(express.json())
 app.use(logger("dev"))
 
-const task = cron.schedule('0 */3 * * *', () => {
-  log('running a task every minute', {crawler});
-  crawler();
-});
-
-task.start();
-
 console.log({today}, today.toDate())
 app.get('/', async (_req, res) => {
   // let pick = await ensure()
   // const pick = await Crawler.find()
-  const pick = await Crawler.find({createdAt: {$gte: today.toDate()}});
+  const pick = await Crawler.find({normalisedAt: {$type: 9}});
   res.status(200).json(pick)
 })
 
