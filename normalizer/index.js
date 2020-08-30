@@ -70,7 +70,7 @@ const findFixture = (matchId) => {
 }
 
 const getFromDb = async () => {
-	const data = await Crawler.find({}).sort([['createdAt', -1]]).limit(5)
+	const data = await Crawler.find({normalisedAt: {$type: 10}}).sort([['createdAt', -1]]).limit(5)
 	
 	// console.log(targetTeam);
 	return data;
@@ -83,6 +83,7 @@ const selectFixture = (arrOfTeams) => {
 }
 
 const updateTips = async (targetFixture, obj) => {
+	console.log({targetFixture, obj})
 	await Crawler.updateOne({ _id: obj._id }, {
 		fixtureId: targetFixture.fixture_id,
 		homeTeamId: targetFixture.homeTeam.team_id,
@@ -105,7 +106,7 @@ const updateTips = async (targetFixture, obj) => {
 
 module.exports = () => {
 	getFromDb().then(res => {
-		// console.log(res);
+		console.log({res});
 		res.forEach(obj => {
 			normalize(obj);
 		});
