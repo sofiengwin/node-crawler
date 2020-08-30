@@ -1,10 +1,6 @@
 const axios = require('axios');
 const Sentry = require("../sentry");
 
-const dotenv = require('dotenv')
-
-dotenv.config()
-
 const FOOTBALL_API_BASE = process.env.FOOTBALL_API_BASE
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY
 
