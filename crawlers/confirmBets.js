@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer');
+const Sentry = require("../sentry");
 
 module.exports = function () {
   return new Promise((resolve, reject) => {

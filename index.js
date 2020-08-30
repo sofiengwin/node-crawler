@@ -24,7 +24,7 @@ app.use(express.json())
 app.use(logger("dev"))
 
 app.get('/', async (_req, res) => {
-  const pick = await Crawler.find({normalisedAt: {$type: 9}}).sort({createdAt: -1});
+  const pick = await Crawler.find({normalisedAt: {$type: 10}, consumedAt: {$type: 10}}).sort({createdAt: -1});
   res.status(200).json(pick)
 })
 
