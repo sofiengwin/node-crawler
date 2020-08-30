@@ -36,7 +36,6 @@ module.exports = function () {
         resolve(confirmBets.map((pick) => normalizePick(pick)))
       } catch (error) {
         Sentry.captureException(error);
-        browser.close();
         console.log({error});
       }
     })()

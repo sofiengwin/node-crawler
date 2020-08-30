@@ -45,7 +45,6 @@ module.exports = function () {
         resolve(OLGPicks.map((pick) => normalizePick(pick)))
       } catch (error) {
         Sentry.captureException(error);
-        browser.close();
         console.log({error});
       }
     })()
