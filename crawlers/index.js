@@ -12,6 +12,7 @@ const moment = require('moment');
 const log = console.log
 const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
 const normalizr = require('../normalizer');
+const Sentry = require("../sentry");
 
 const today = moment().startOf('day')
 
@@ -49,33 +50,40 @@ const sites = [
       crawlerImplementation: confirmBets,
     },
 ]
-
-const crawler = () => {
-  sites.forEach(async ({provider, crawlerImplementation}) => {
+console.log({today}, today.toDate())
+const crawler = async () => {
+  for(const providerImplemtation of sites) {
+    const {provider, crawlerImplementation} = providerImplemtation;
     await postStartedCrawling(provider)
-
+  
     log({provider, crawlerImplementation, ensure})
     const todayTipsByProvider = await Crawler.find({provider: provider, createdAt: {$gte: today.toDate()}});
     console.log({todayTipsByProvider})
     if (todayTipsByProvider.length) {
       console.log('already fetched today')
-      return;
+      continue;
     }
-
-    const tips = await crawlerImplementation();
-
+    
+    let tips = [];
+    try { 
+      tips = await crawlerImplementation();
+    } catch (error) {
+      postFailure(provider);
+      Sentry.captureException(error);
+      continue;
+    }
+  
     await saveTips(tips, provider);
     await postSuccess(provider, tips.length);
     normalizr();
-  })
+  }
 }
 
 const saveTips = async (tips, provider) => {
-  tips.forEach(async (tip) => {
-    console.log({provider})
+  for(const tip of tips) {
     const newTip = new Crawler({provider: provider, ...tip});
     await newTip.save()
-  })
+  }
 }
 
 
