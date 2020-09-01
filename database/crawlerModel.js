@@ -15,7 +15,11 @@ const CrawlerSchema = mongoose.Schema({
       default: null,
 
     },
-    normalisedAt: Date,
+    normalisedAt: {
+      type: Date,
+      default: null,
+
+    },
     eventTimestamp: Date,
     provider: String,
     createdAt: {

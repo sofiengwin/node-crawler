@@ -72,7 +72,6 @@ const findFixture = (matchId) => {
 const getFromDb = async () => {
 	const data = await Crawler.find({normalisedAt: {$type: 10}}).sort([['createdAt', -1]]).limit(5)
 	
-	// console.log(targetTeam);
 	return data;
 }
 // 536 sevilla, 257 rangers

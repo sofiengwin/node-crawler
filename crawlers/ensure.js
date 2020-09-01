@@ -6,7 +6,6 @@ module.exports = function () {
     ;(async () => {
       try {
         const browser = await puppeteer.launch({
-          headless: true, // debug only
           args: ['--no-sandbox']
         })
         const page = await browser.newPage()
