@@ -11,7 +11,6 @@ const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
 const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
-const normalizr = require('../normalizer');
 const Sentry = require("../sentry");
 const {normalize} = require('../normalizer');
 
@@ -76,7 +75,6 @@ const crawler = async () => {
   
     await saveTips(tips, provider);
     await postSuccess(provider, tips.length);
-    normalizr();
   }
 }
 
