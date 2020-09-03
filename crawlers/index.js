@@ -13,6 +13,7 @@ const log = console.log
 const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
 const normalizr = require('../normalizer');
 const Sentry = require("../sentry");
+const {normalize} = require('../normalizer');
 
 const today = moment().startOf('day')
 
@@ -82,7 +83,9 @@ const crawler = async () => {
 const saveTips = async (tips, provider) => {
   for(const tip of tips) {
     const newTip = new Crawler({provider: provider, ...tip});
-    await newTip.save()
+    const result = await newTip.save();
+
+    normalize(result);
   }
 }
 
