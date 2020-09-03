@@ -113,7 +113,7 @@ const normalizeFromDb = async () => {
 	});
 }
 
-module.exports = () => {
+module.exports = {
 	normalizeFromDb,
 	normalize
 }
