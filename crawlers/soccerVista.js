@@ -21,10 +21,23 @@ module.exports = function () {
             let pick = { }
             if (!rows[i].classList.contains('headupe')) {
                 let homeTeam = rows[i].children[2].textContent;
-                pick.awayTeam = rows[i].children[4].textContent;
+                let awayTeam = rows[i].children[4].textContent;
+                pick.awayTeam = awayTeam;
                 pick.homeTeam = homeTeam
-                let tip = rows[i].children[6].textContent;
-                pick.tip = tip.includes(homeTeam) ? 1 : 2;
+                
+
+                //add odd
+                let indx = rows[i].children[6].textContent.indexOf('(');
+                let odd = 1.5;
+                if (indx > 0)
+                {
+                  let tip = rows[i].children[6].textContent;
+                  pick.tip = tip.includes(homeTeam) ? 1 : tip.includes(awayTeam) ? 2 : "X";
+                  let oddSelection = +rows[i].children[6].textContent.slice(indx + 1, rows[i].children[6].textContent.length - 1)
+                  odd = typeof oddSelection == 'number' ? oddSelection : 1.5;
+                }
+
+                pick.odd = odd;
                 picks.push(pick);
             }
           };

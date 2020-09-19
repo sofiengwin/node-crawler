@@ -10,19 +10,19 @@ module.exports = function () {
         })
         const page = await browser.newPage()
       
-        await page.goto('https://confirmbets.com/Free-Football-Predictions', {
+        await page.goto('https://confirmbets.com/', {
           waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
         });
 
 				const confirmBets = await page.evaluate(() => {
-					let rows = document.querySelector("#PredictionDetails tbody").children;
+					let rows = document.querySelector("#TopFreePrediction #today tbody").children;
 					console.log({rows, document})
 					window.rows = rows
 					let picks = []
 					for(let i = 1; i < rows.length; i++) {
 						pick = {}
-						pick.fixture = rows[i].children[3].textContent;
-						pick.tip = rows[i].children[4].textContent;
+						pick.fixture = rows[i].children[3].textContent.trim();
+						pick.tip = rows[i].children[4].textContent.trim();
 						picks.push(pick)
 					}
 					return picks;

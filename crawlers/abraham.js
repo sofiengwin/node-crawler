@@ -21,6 +21,8 @@ module.exports = function () {
               let pick = {}
               pick.fixture = document.querySelectorAll('.entry-content tr')[i].children[1].innerText;
               pick.tip = document.querySelectorAll('.entry-content tr')[i].children[2].innerText;
+              //add odd
+              pick.odd = document.querySelectorAll('.entry-content tr')[i].children[3].innerText;
               picks.push(pick);
           }
           return picks;

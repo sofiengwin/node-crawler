@@ -28,6 +28,8 @@ module.exports = function () {
                   pick.fixture = rows[i].children[1].children[0].textContent;
                   pick.tip = rows[i].children[2].children[0].textContent.trim();
                   pick.accuracy = rows[i].children[4].children[1].textContent.trim();
+                  //add odd
+                  pick.odd = rows[i].children[3].textContent.trim()
               }
               if (pick.fixture && pick.tip) {
                   picks.push(pick);

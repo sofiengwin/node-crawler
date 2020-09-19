@@ -22,6 +22,10 @@ module.exports = function () {
               pick.fixture = document.querySelectorAll('.item-featured table tbody')[1].children[i].children[2].textContent.trim()
               let tipAndOdd = document.querySelectorAll('.item-featured table tbody')[1].children[i].children[3].textContent.trim().split(' ')
               pick.tip = tipAndOdd[0]
+
+              //add odd
+              pick.odd = tipAndOdd[tipAndOdd.length - 1]
+
               picks.push(pick);
           }
           return picks;
