@@ -70,8 +70,10 @@ const findFixture = (matchId) => {
 }
 
 const getFromDb = async () => {
-	const data = await Crawler.find({normalisedAt: {$type: 10}}).sort([['createdAt', -1]]).limit(5)
-	console.log({data})
+	const data = await Crawler.find({
+		normalisedAt: {$type: 10}
+	}).sort({createdAt: -1}).limit(10);
+
 	return data;
 }
 // 536 sevilla, 257 rangers
@@ -89,7 +91,7 @@ const updateTips = async (targetFixture, obj) => {
 		awayTeamId: targetFixture.awayTeam.team_id,
 		league: targetFixture.league.name,
 		country: targetFixture.league.country,
-		eventTimestamp: targetFixture.event_timestamp,
+		eventTimestamp: targetFixture.event_timestamp * 1000,
 		normalisedAt: Date.now(),
 	}, (err, res) => {
 		if (err) {
@@ -102,12 +104,16 @@ const updateTips = async (targetFixture, obj) => {
 }
 
 
-
-module.exports = () => {
+const normalizeFromDb = async () => {
 	getFromDb().then(res => {
 		console.log({res});
 		res.forEach(obj => {
 			normalize(obj);
 		});
 	});
+}
+
+module.exports = {
+	normalizeFromDb,
+	normalize
 }

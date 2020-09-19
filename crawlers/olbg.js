@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer');
-const Sentry = require("../sentry");
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
@@ -45,8 +44,7 @@ module.exports = function () {
   
         resolve(OLGPicks.map((pick) => normalizePick(pick)))
       } catch (error) {
-        Sentry.captureException(error);
-        console.log({error});
+        reject(error);
       }
     })()
   })

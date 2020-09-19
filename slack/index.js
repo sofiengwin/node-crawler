@@ -69,3 +69,48 @@ module.exports = {
   postFailure,
   postStartedCrawling,
 }
+
+const manageOutcomeMessage = `
+{
+	"type": "block_actions",
+	"user": {
+		"id": "U0CA5",
+		"username": "Amy McGee",
+		"name": "Amy McGee",
+		"team_id": "T3MDE"
+	},
+	"api_app_id": "A0CA5",
+	"token": "Shh_its_a_seekrit",
+	"container": {
+		"type": "message",
+		"text": "The contents of the original message where the action originated"
+	},
+	"trigger_id": "12466734323.1395872398",
+	"team": {
+		"id": "T0CAG",
+		"domain": "acme-creamery"
+	},
+	"response_url": "https://www.postresponsestome.com/T123567/1509734234",
+	"actions": [
+		{
+			"type": "static_select",
+			"block_id": "3or",
+			"action_id": "GghGF",
+			"selected_option": {
+				"text": {
+					"type": "plain_text",
+					"text": "Cancelled",
+					"emoji": true
+				},
+				"value": "cancelled-2872828282828829292929"
+			},
+			"placeholder": {
+				"type": "plain_text",
+				"text": "Manage Outcome",
+				"emoji": true
+			},
+			"action_ts": "1599052398.095316"
+		}
+	]
+}
+`

@@ -5,7 +5,7 @@ const dotenv = require('dotenv')
 const {crawler} = require('./crawlers');
 const log = console.log
 const Crawler = require('./database/crawlerModel');
-const normalizer = require('./normalizer');
+const {normalizeFromDb} = require('./normalizer');
 const Sentry = require('./sentry');
 
 dotenv.config()
@@ -24,7 +24,11 @@ app.use(express.json())
 app.use(logger("dev"))
 
 app.get('/', async (_req, res) => {
-  const pick = await Crawler.find({consumedAt: {$type: 10}}).sort({createdAt: -1});
+  const pick = await Crawler.find({
+    consumedAt: {$type: 10},
+    normalisedAt: {$type: 9},
+  }).sort({createdAt: -1});
+  
   res.status(200).json(pick)
 })
 
@@ -41,7 +45,7 @@ app.get('/crawl', async (req, res) => {
 
 app.get('/normalizr', async (req, res) => {
   try {
-    normalizer();
+    normalizeFromDb();
 
     res.json({message: 'Started Normalizr service'})
   } catch (error) {
