@@ -58,7 +58,6 @@ const crawler = async () => {
   
     log({provider, crawlerImplementation, ensure})
     const todayTipsByProvider = await Crawler.find({provider: provider, createdAt: {$gte: today.toDate()}});
-    console.log({todayTipsByProvider})
     if (todayTipsByProvider.length) {
       console.log('already fetched today')
       continue;
