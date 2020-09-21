@@ -70,13 +70,9 @@ const findFixture = (matchId) => {
 }
 
 const getFromDb = async () => {
-	// const data = await Crawler.find({
-	// 	normalisedAt: {$type: 10}
-	// }).sort({createdAt: -1}).limit(10);
-
 	const data = await Crawler.find({
-		provider: 'Stats24',
-	  }).sort({createdAt: -1}).limit(20);
+		normalisedAt: {$type: 10}
+	}).sort({createdAt: -1}).limit(10);
 
 	return data;
 }
