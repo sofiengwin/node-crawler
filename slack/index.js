@@ -7,33 +7,52 @@ token = process.env.SLACK_TOKEN
 console.log({token })
 const web = new WebClient(token);
 
-const postMessage = async (message) => {
+const postMessage = async (message, parentId) => {
   try { 
     const result = await web.chat.postMessage({
       text: 'Started Crawling: *BetEnsured*',
       channel: "C017P7H4BQC",
       blocks: message,
+      thread_ts: parentId,
     });
 
     // The result contains an identifier for the message, `ts`.
     console.log(`Successfully send message ${result.ts}`);
+    return result;
   } catch (error) {
     console.log({error})
   }
 }
 
-const postSuccess = async (provider, tipsCount) => {
+const postSuccess = async (provider, tips) => {
   const message = [
     {
       "type": "section",
       "text": {
         "type": "mrkdwn",
-        "text": `Completed Crawling: *${provider}* Successfully :100: Found *${tipsCount}* tips`
+        "text": `Completed Crawling: *${provider}* Successfully :100: Found *${tips.length}* tips`
       }
     }
   ];
 
-  await postMessage(message);
+  const response = await postMessage(message);
+  for(const tip of tips) {
+    await postReply(tip, response.ts)
+  }
+}
+
+const postReply = async (tip, parentId) => {
+  const message = [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `${tip.homeTeam} vs ${tip.awayTeam}`,
+      }
+    }
+  ];
+
+  await postMessage(message, parentId);
 }
 
 const postStartedCrawling = async (provider) => {

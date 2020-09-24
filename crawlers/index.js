@@ -73,7 +73,7 @@ const crawler = async () => {
     }
   
     await saveTips(tips, provider);
-    await postSuccess(provider, tips.length);
+    await postSuccess(provider, tips);
   }
 }
 
