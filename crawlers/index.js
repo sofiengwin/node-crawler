@@ -82,7 +82,7 @@ const saveTips = async (tips, provider) => {
     const newTip = new Crawler({provider: provider, ...tip});
     const result = await newTip.save();
 
-    normalize(result);
+    // normalize(result);
   }
 }
 
