@@ -105,12 +105,15 @@ const updateTips = async (targetFixture, obj) => {
 
 
 const normalizeFromDb = async () => {
-	getFromDb().then(res => {
-		console.log({res});
-		res.forEach(obj => {
-			normalize(obj);
-		});
-	});
+	const tips = await getFromDb();
+	for(const tip of tips) {
+		try {
+			await normalize(tip)
+			
+		} catch (error) {
+			console.log({error})
+		}
+	}
 }
 
 module.exports = {
