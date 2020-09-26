@@ -40,7 +40,7 @@ module.exports = function () {
 }
 
 const normalizePick = (pick) => {
-  const [homeTeam, awayTeam] = pick.fixture.split(/vs/);
+  const [homeTeam, awayTeam] = pick.fixture.split(/vs/i);
 
   return {
     homeTeam,
