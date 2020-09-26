@@ -24,6 +24,10 @@ app.use(express.json())
 app.use(logger("dev"))
 
 app.get('/', async (_req, res) => {
+  // const pick = await Crawler.find({
+  //   provider: "Stats24"
+  // }).sort({createdAt: -1}).limit(10);
+  
   const pick = await Crawler.find({
     consumedAt: {$type: 10},
     normalisedAt: {$type: 9},

@@ -5,83 +5,142 @@ const mongoose = require("mongoose");
 
 // const teamsObj = { homeTeam: "Sevilla", awayTeam: "Wolves"}
 const normalize = async (obj) => {
-	const homeId = await rapidClient(`/teams/search/${obj.homeTeam.trim().replace(' ', '_')}`);
-	const awayId = await rapidClient(`/teams/search/${obj.awayTeam.trim()}`);
-	if (!homeId || !homeId.teams) return false;
-	let {teams} = homeId
-	let teamsAway = awayId.teams;
-	
-	const homeTeam = findTeam(teams, obj)
-	const awayTeam = findTeam(teamsAway, obj)
 
-	if (homeTeam.team_id) {
-		const result = await findFixture(homeTeam.team_id);
-		if (!result || !result.fixtures) return { };
-		let { fixtures } = result;
-		const targetFixture = selectFixture(fixtures)
-		console.log(targetFixture, "FIx");
-		prepareForUpdate(targetFixture, homeTeam, awayTeam, obj)
-	} else {
-		console.log("None");
+	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);	
+	let tips = [obj]
+
+	if (todayMatches && tips.length > 0) {
+		for (let match of todayMatches.fixtures) {
+			let removedId = await getMatchFromTodaymatches(tips.filter(tip => tip.awayTeam && isTodayMatch(tip)), match);
+			if (removedId) {
+				tips = tips.filter(tip => tip._id !== removedId)
+			}
+		}
 	}
+	console.log("Done");
+	// const homeId = await rapidClient(`/teams/search/${obj.homeTeam.trim().replace(' ', '_')}`);
+	// const awayId = await rapidClient(`/teams/search/${obj.awayTeam.trim()}`);
+	// if (!homeId || !homeId.teams) return false;
+	// let {teams} = homeId
+	// let teamsAway = awayId.teams;
+	
+	// const homeTeam = findTeam(teams, obj)
+	// const awayTeam = findTeam(teamsAway, obj)
+
+	// console.log(homeTeam, "team")
+
+	// if (homeTeam.team_id) {
+	// 	const result = await findFixture(homeTeam.team_id);
+	// 	if (!result || !result.fixtures) return { };
+	// 	let { fixtures } = result;
+	// 	const targetFixture = selectFixture(fixtures)
+	// 	console.log(targetFixture, "FIx");
+	// 	prepareForUpdate(targetFixture, homeTeam, awayTeam, obj)
+	// } else {
+	// 	console.log("None");
+	// }
+}
+
+function fuzzyMatch(pattern, str) {
+	pattern = '.*' + pattern.split('').join('.*') + '.*';
+	const re = new RegExp(pattern);
+	return re.test(str);
+}
+
+const getMatchFromTodaymatches = async (tips, match) => {
+	const filtered = await tips.find(i => fuzzyMatch(i.homeTeam, match.homeTeam.team_name) || i.awayTeam, match.awayTeam.team_name);
+	let removedId;
+	if (filtered) {
+		const fixture = await findFixture(match.fixture_id)
+		await updateTips(fixture, filtered)
+		removedId = filtered._id;
+	}
+	return removedId;
+}
+
+const normalizeV2 = async () => {
+	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);	
+	let tips = await (await getFromDb()).filter(tip => isTodayMatch(tip));
+
+	if (todayMatches && tips.length > 0) {
+		for (let match of todayMatches.fixtures) {
+			let removedId = await getMatchFromTodaymatches(tips.filter(tip => tip.awayTeam && isTodayMatch(tip)), match);
+			if (removedId) {
+				tips = tips.filter(tip => tip._id !== removedId)
+			}
+		}
+	}
+	console.log("Done");
+}
+
+const isTodayMatch = (tip) => {
+	let today = new Date(Date.now());
+	let tipDate = new Date(tip.createdAt);
+	return tipDate.getDate() == today.getDate() && tipDate.getMonth() == today.getMonth() && tipDate.getFullYear() == today.getFullYear();
 }
 
 // normalize(teamsObj)
 
-const prepareForUpdate = (targetFixture, homeTeam, awayTeam, obj) => {
-	if (targetFixture && targetFixture.fixture_id) {
-		let homeMatch = targetFixture.homeTeam.team_id === homeTeam.team_id;
-		let awayMatch = targetFixture.awayTeam.team_id === awayTeam.team_id;
-		if (homeMatch && awayMatch) {
-			console.log("Correct Fixture");
-			updateTips(targetFixture, obj);
-		} else {
-			console.log("Wrong Fixture");
-		}
-	} else {
-		console.log("Fixture Not found");
-	}
-}
+// const prepareForUpdate = (targetFixture, homeTeam, awayTeam, obj) => {
+// 	if (targetFixture && targetFixture.fixture_id) {
+// 		let homeMatch = targetFixture.homeTeam.team_id === homeTeam.team_id;
+// 		let awayMatch = targetFixture.awayTeam.team_id === awayTeam.team_id;
+// 		if (homeMatch && awayMatch) {
+// 			console.log("Correct Fixture");
+// 			updateTips(targetFixture, obj);
+// 		} else {
+// 			console.log("Wrong Fixture");
+// 		}
+// 	} else {
+// 		console.log("Fixture Not found");
+// 	}
+// }
 
-const findTeam = (arr, obj) => {
-	let targetTeam = {};
-	if (arr.length <= 0) return { }
-	arr.forEach(team => {
-		if (team.name.toLowerCase() === obj.homeTeam.toLowerCase() || team.name.toLowerCase() === obj.awayTeam.toLowerCase()) {
-			targetTeam = team;
-		} else {
-			console.log("Does not match");
-		}
-	})
-	if (!targetTeam.name) {
-		targetTeam = arr[0];
-	}
-	return targetTeam;
-}
+// const findTeam = (arr, obj) => {
+// 	let targetTeam = {};
+// 	if (arr.length <= 0) return { }
+// 	arr.forEach(team => {
+// 		if (team.name.toLowerCase() === obj.homeTeam.toLowerCase() || team.name.toLowerCase() === obj.awayTeam.toLowerCase()) {
+// 			targetTeam = team;
+// 		} else {
+// 			console.log("Does not match");
+// 		}
+// 	})
+// 	if (!targetTeam.name) {
+// 		targetTeam = arr[0];
+// 	}
+// 	return targetTeam;
+// }
 
 const findFixture = (matchId) => {
+	console.log(matchId);
 	return new Promise(resolve => {
-		rapidApiClient(`/fixtures/team/${matchId}/next/1`)
+		// rapidApiClient(`/fixtures/team/${matchId}/next/1`)
+		rapidApiClient(`/fixtures/id/${matchId}`)
 			.then(res => {
 				console.log(res);
-				resolve(res)
+				if (res && res.fixtures.length == 0) resolve({ });
+				resolve(res.fixtures[0])
 			})
 	})
 }
 
 const getFromDb = async () => {
+	// const data = await Crawler.find({
+	// 	_id: "5f6ed93b6931de0024a599ff"
+	// });
 	const data = await Crawler.find({
 		normalisedAt: {$type: 10}
-	}).sort({createdAt: -1}).limit(10);
+	}).sort({createdAt: -1}).limit(30);
 
 	return data;
 }
 // 536 sevilla, 257 rangers
 
-const selectFixture = (arrOfTeams) => {
-	if (arrOfTeams.length <= 0) return { };
-	return arrOfTeams[0];
-}
+// const selectFixture = (arrOfTeams) => {
+// 	if (arrOfTeams.length <= 0) return { };
+// 	return arrOfTeams[0];
+// }
 
 const updateTips = async (targetFixture, obj) => {
 	console.log({targetFixture, obj})
@@ -105,15 +164,22 @@ const updateTips = async (targetFixture, obj) => {
 
 
 const normalizeFromDb = async () => {
-	const tips = await getFromDb();
-	for(const tip of tips) {
-		try {
-			await normalize(tip)
-			
-		} catch (error) {
-			console.log({error})
-		}
+	// const tips = await getFromDb();
+
+	try {
+		await normalizeV2();
+	} catch (error) {
+		console.log(error);
 	}
+
+	// for(const tip of tips) {
+	// 	console.log(tip);
+	// 	try {
+	// 		await normalize(tip)
+	// 	} catch (error) {
+	// 		console.log({error})
+	// 	}
+	// }
 }
 
 module.exports = {
