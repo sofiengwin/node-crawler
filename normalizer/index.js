@@ -48,7 +48,7 @@ function fuzzyMatch(pattern, str) {
 }
 
 const getMatchFromTodaymatches = async (tips, match) => {
-	const filtered = await tips.find(i => fuzzyMatch(i.homeTeam, match.homeTeam.team_name) || i.awayTeam, match.awayTeam.team_name);
+	const filtered = await tips.find(i => fuzzyMatch(i.homeTeam, match.homeTeam.team_name) || fuzzyMatch(i.awayTeam, match.awayTeam.team_name));
 	let removedId;
 	if (filtered) {
 		const fixture = await findFixture(match.fixture_id)
@@ -129,8 +129,9 @@ const getFromDb = async () => {
 	// const data = await Crawler.find({
 	// 	_id: "5f6ed93b6931de0024a599ff"
 	// });
+	
 	const data = await Crawler.find({
-		normalisedAt: {$type: 10}
+		normalisedAt: {$type: 10},
 	}).sort({createdAt: -1}).limit(30);
 
 	return data;
@@ -152,6 +153,7 @@ const updateTips = async (targetFixture, obj) => {
 		country: targetFixture.league.country,
 		eventTimestamp: targetFixture.event_timestamp * 1000,
 		normalisedAt: Date.now(),
+		consumedAt: null
 	}, (err, res) => {
 		if (err) {
 			console.log(err, "error");
@@ -164,8 +166,8 @@ const updateTips = async (targetFixture, obj) => {
 
 
 const normalizeFromDb = async () => {
-	// const tips = await getFromDb();
-
+	const tips = await getFromDb();
+	console.log(tips);
 	try {
 		await normalizeV2();
 	} catch (error) {
