@@ -28,6 +28,7 @@ const CrawlerSchema = mongoose.Schema({
     },
     accuracy: String,
     outcome: String,
+    odd: String
 })
 
 module.exports = mongoose.model("crawler", CrawlerSchema)
