@@ -3,10 +3,11 @@ const rapidApiClient = require('./client');
 const Crawler = require('../database/crawlerModel')
 const mongoose = require("mongoose");
 
+
 // const teamsObj = { homeTeam: "Sevilla", awayTeam: "Wolves"}
 const normalize = async (obj) => {
 
-	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);	
+	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);
 	let tips = [obj]
 
 	if (todayMatches && tips.length > 0) {
@@ -23,7 +24,7 @@ const normalize = async (obj) => {
 	// if (!homeId || !homeId.teams) return false;
 	// let {teams} = homeId
 	// let teamsAway = awayId.teams;
-	
+
 	// const homeTeam = findTeam(teams, obj)
 	// const awayTeam = findTeam(teamsAway, obj)
 
@@ -48,7 +49,7 @@ function fuzzyMatch(pattern, str) {
 }
 
 const getMatchFromTodaymatches = async (tips, match) => {
-	const filtered = await tips.find(i => fuzzyMatch(i.homeTeam, match.homeTeam.team_name) || fuzzyMatch(i.awayTeam, match.awayTeam.team_name));
+	const filtered = await tips.find(i => fuzzyMatch(i.homeTeam, match.homeTeam.team_name) || fuzzyMatch(i.awayTeam, match.awayTeam.team_name) || i.homeTeam.toLowerCase() === match.homeTeam.team_name.toLowerCase() || i.awayTeam.toLowerCase() === match.awayTeam.team_name.toLowerCase() );
 	let removedId;
 	if (filtered) {
 		const fixture = await findFixture(match.fixture_id)
@@ -59,14 +60,16 @@ const getMatchFromTodaymatches = async (tips, match) => {
 }
 
 const normalizeV2 = async () => {
-	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);	
+	const todayMatches = await rapidApiClient(`/fixtures/date/${new Date(Date.now()).getFullYear()}-${new Date(Date.now()).getMonth() + 1}-${new Date(Date.now()).getDate()}`);
 	let tips = await (await getFromDb()).filter(tip => isTodayMatch(tip));
-
+	console.log(tips);
 	if (todayMatches && tips.length > 0) {
 		for (let match of todayMatches.fixtures) {
-			let removedId = await getMatchFromTodaymatches(tips.filter(tip => tip.awayTeam && isTodayMatch(tip)), match);
-			if (removedId) {
-				tips = tips.filter(tip => tip._id !== removedId)
+			if (tips.length > 0) {
+				let removedId = await getMatchFromTodaymatches(tips.filter(tip => tip.awayTeam && isTodayMatch(tip)), match);
+				if (removedId) {
+					tips = tips.filter(tip => tip._id !== removedId)
+				}
 			}
 		}
 	}
@@ -119,7 +122,7 @@ const findFixture = (matchId) => {
 		rapidApiClient(`/fixtures/id/${matchId}`)
 			.then(res => {
 				console.log(res);
-				if (res && res.fixtures.length == 0) resolve({ });
+				if (res && res.fixtures.length == 0) resolve({});
 				resolve(res.fixtures[0])
 			})
 	})
@@ -129,10 +132,10 @@ const getFromDb = async () => {
 	// const data = await Crawler.find({
 	// 	_id: "5f6ed93b6931de0024a599ff"
 	// });
-	
+
 	const data = await Crawler.find({
-		normalisedAt: {$type: 10},
-	}).sort({createdAt: -1}).limit(50);
+		normalisedAt: { $type: 10 },
+	}).sort({ createdAt: -1 }).limit(50);
 
 	return data;
 }
@@ -144,7 +147,7 @@ const getFromDb = async () => {
 // }
 
 const updateTips = async (targetFixture, obj) => {
-	console.log({targetFixture, obj})
+	console.log({ targetFixture, obj })
 	await Crawler.updateOne({ _id: obj._id }, {
 		fixtureId: targetFixture.fixture_id,
 		homeTeamId: targetFixture.homeTeam.team_id,
@@ -153,7 +156,6 @@ const updateTips = async (targetFixture, obj) => {
 		country: targetFixture.league.country,
 		eventTimestamp: targetFixture.event_timestamp * 1000,
 		normalisedAt: Date.now(),
-		consumedAt: null
 	}, (err, res) => {
 		if (err) {
 			console.log(err, "error");
@@ -166,7 +168,7 @@ const updateTips = async (targetFixture, obj) => {
 
 
 const normalizeFromDb = async () => {
-	const tips = await getFromDb();
+	// const tips = await getFromDb();
 	// console.log(tips);
 	try {
 		await normalizeV2();
