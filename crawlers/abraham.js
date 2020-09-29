@@ -46,5 +46,6 @@ const normalizePick = (pick) => {
     homeTeam,
     awayTeam,
     bet: pick.tip,
+    odd: pick.odd
   }
 }

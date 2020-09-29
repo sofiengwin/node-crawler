@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
-    ;(async () => {
+    (async () => {
       try {
         const browser = await puppeteer.launch({
           args: ['--no-sandbox']
@@ -49,5 +49,6 @@ const normalizePick = (pick) => {
     homeTeam,
     awayTeam,
     bet: pick.tip,
+    odd: pick.odd
   }
 }

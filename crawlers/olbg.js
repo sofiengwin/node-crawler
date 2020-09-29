@@ -58,5 +58,6 @@ const normalizePick = (pick) => {
     awayTeam,
     bet: pick.tip,
     accuracy: pick.accuracy,
+    odd: pick.odd
   }
 }
