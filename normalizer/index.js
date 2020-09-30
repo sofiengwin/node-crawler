@@ -135,7 +135,7 @@ const getFromDb = async () => {
 
 	const data = await Crawler.find({
 		normalisedAt: { $type: 10 },
-	}).sort({ createdAt: -1 }).limit(50);
+	}).sort({ createdAt: -1 }).limit(100);
 
 	return data;
 }
