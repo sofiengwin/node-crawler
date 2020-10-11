@@ -46,9 +46,10 @@ const normalizePick = (pick) => {
   const [homeTeam, awayTeam] = pick.fixture.split(/-/);
 
   return {
-    homeTeam,
-    awayTeam,
-    bet: pick.tip,
-    odd: pick.odd
+    odd: pick.odd,
+    homeTeam: pick.homeTeam,
+    awayTeam: pick.awayTeam,
+    bet: pick.tip
+    
   }
 }

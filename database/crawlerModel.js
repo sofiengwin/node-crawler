@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const CrawlerSchema = mongoose.Schema({
+    odd: String,
     homeTeam: String,
     awayTeam: String,
     homeTeamId: Number,
@@ -28,7 +29,6 @@ const CrawlerSchema = mongoose.Schema({
     },
     accuracy: String,
     outcome: String,
-    odd: String
 })
 
 module.exports = mongoose.model("crawler", CrawlerSchema)

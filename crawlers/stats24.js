@@ -40,14 +40,13 @@ module.exports = function () {
     })()
   })
 }
-
 const normalizePick = (pick) => {
   const [homeTeam, awayTeam] = pick.fixture.split(/-/);
 
   return {
-    homeTeam,
-    awayTeam,
     odd: pick.odd,
+    homeTeam: pick.homeTeam,
+    awayTeam: pick.awayTeam,
     bet: pick.tip,
     accuracy: pick.accuracy
   }

@@ -158,6 +158,7 @@ const findFixtureByTeamId = (matchId) => {
 	})
 }
 
+
 const getFromDb = async () => {
 	// const data = await Crawler.find({
 	// 	_id: "5f6ed93b6931de0024a599ff"
@@ -165,7 +166,7 @@ const getFromDb = async () => {
 
 	const data = await Crawler.find({
 		normalisedAt: { $type: 10 },
-	}).sort({ createdAt: -1 }).limit(100);
+	}).sort({ createdAt: -1 }).limit(30);
 
 	return data;
 }
@@ -198,13 +199,13 @@ const updateTips = async (targetFixture, obj) => {
 
 
 const normalizeFromDb = async () => {
-	// const tips = await getFromDb();
-	// console.log(tips);
-	try {
-		await normalizeV2();
-	} catch (error) {
-		console.log(error);
-	}
+	const tips = await getFromDb();
+	console.log(tips);
+	// try {
+	// 	await normalizeV2();
+	// } catch (error) {
+	// 	console.log(error);
+	// }
 
 	// for(const tip of tips) {
 	// 	console.log(tip);

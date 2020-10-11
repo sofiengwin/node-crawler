@@ -57,9 +57,10 @@ module.exports = function () {
 
 const normalizePick = (pick) => {
   return {
+    odd: pick.odd,
     homeTeam: pick.homeTeam,
     awayTeam: pick.awayTeam,
-    bet: pick.tip,
-    odd: pick.odd
+    bet: pick.tip
+    
   }
 }

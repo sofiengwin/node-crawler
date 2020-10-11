@@ -16,11 +16,11 @@ module.exports = function () {
         const ensuredPicks = await page.evaluate(() => {
           let count = document.querySelectorAll("#today table tr").length;
           const picks = []
-          for (let i = 0; i < count; i++) {
+          for (let j = 0; j < count; j++) {
               let pick = {}
-              if (document.querySelectorAll("#today table tr")[i].children[0].textContent != '') {
-                  pick.fixture = document.querySelectorAll("#today table tr")[i].children[1].textContent
-                  pick.tip = document.querySelectorAll("#today table tr")[i].children[2].children[0].textContent
+              if (document.querySelectorAll("#today table tr")[j].children[0].textContent != '') {
+                  pick.fixture = document.querySelectorAll("#today table tr")[j].children[1].textContent
+                  pick.tip = document.querySelectorAll("#today table tr")[j].children[2].children[0].textContent
                   picks.push(pick)
               }
           }
