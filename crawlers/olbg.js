@@ -55,8 +55,8 @@ const normalizePick = (pick) => {
 
   return {
     odd: pick.odd,
-    homeTeam: pick.homeTeam,
-    awayTeam: pick.awayTeam,
+    homeTeam,
+    awayTeam,
     bet: pick.tip,
     accuracy: pick.accuracy
     
