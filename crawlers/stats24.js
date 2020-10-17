@@ -23,7 +23,7 @@ module.exports = function () {
               pick.fixture = teams.join('-')
               pick.tip = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[4].innerText.trim();
               pick.accuracy = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[0].children[3].innerText.trim()
-              pick.odd = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[0].children[5].innerText.trim()
+              pick.odd = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[5].innerText.trim()
               picks.push(pick)
           }
           return picks;
