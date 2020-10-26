@@ -21,7 +21,15 @@ module.exports = function () {
               let pick = {}
               let teams = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[2].innerText.trim().split('\n')
               pick.fixture = teams.join('-')
-              pick.tip = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[4].innerText.trim();
+
+              let tip = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[4].innerText.trim();
+              if (tip.includes("In Full Time")) {
+                tip.replace("In Full Time", "");
+              } else if (tip.includes("In 1st Half")) {
+                tip.replace("In 1st Half", "");
+              }
+
+              pick.tip = tip;
               pick.accuracy = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[0].children[3].innerText.trim()
               pick.odd = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[5].innerText.trim()
               picks.push(pick)
