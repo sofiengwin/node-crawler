@@ -11,6 +11,7 @@ const tips180 = require('./tips180')
 const tips1960 = require('./1960tips')
 const sportyTrader = require('./sportyTrader')
 const betblazers = require('./betBlazers')
+const betGurus = require('./betGurus')
 
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
@@ -69,6 +70,10 @@ const sites = [
     {
       provider: 'BetBlazers',
       crawlerImplementation: sportyTrader,
+    },
+    {
+      provider: 'BetGurus',
+      crawlerImplementation: betGurus,
     },
 ]
 console.log({today}, today.toDate())

@@ -50,7 +50,7 @@ const normalizePick = (pick) => {
   const [homeTeam, awayTeam] = pick.fixture.split(/ vs. /);
 
   return {
-    // odd: pick.odd,
+    odd: pick.odd,
     homeTeam,
     awayTeam,
     bet: pick.tip
