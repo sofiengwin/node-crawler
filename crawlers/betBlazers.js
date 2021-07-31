@@ -9,20 +9,26 @@ module.exports = function () {
           })
           const page = await browser.newPage()
           
-          await page.goto('https://www.sportytrader.com/en/betting-tips/', {
+          await page.goto('https://betblazers.com/betting-tips', {
             waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
           });
     
           const tips = await page.evaluate(() => {
-            let count = document.querySelectorAll('.betting-tip-wrapper .betting-cards > .betting-card').length;
+            let count = document.querySelectorAll('.tips-table .rowlink .item').length;
             let picks = []
             for (let i = 0; i < count; i++) {
                 let pick = {}
-                pick.fixture = document.querySelectorAll('.betting-tip-wrapper .betting-cards > .betting-card')[i].children[0].getAttribute('content');
-                pick.tip = document.querySelectorAll('.betting-tip-wrapper .betting-cards > .betting-card')[i].children[2].children[0].children[2].children[0].children[1].innerText;
+                const date = document.querySelectorAll('.tips-table .rowlink .item')[i].children[0].innerText;
+    
+                if (new Date(Date.now()).getDate() === +(date.split(' ')[0])) {
+                    pick.fixture = document.querySelectorAll('.tips-table .rowlink .item')[i].children[2].children[0].innerText;
+                    pick.odd = document.querySelectorAll('.tips-table .rowlink .item')[i].children[4].innerText.split(' ')[0];
+                    pick.tip = document.querySelectorAll('.tips-table .rowlink .item')[i].children[3].innerText;
+                }
+                
                 //add odd
                 // pick.odd = document.querySelectorAll('.entry-content tr')[i].children[3].innerText;
-                picks.push(pick);
+                if (pick.fixture) picks.push(pick);
             }
             return picks;
           })
@@ -41,7 +47,7 @@ module.exports = function () {
 }
 
 const normalizePick = (pick) => {
-  const [homeTeam, awayTeam] = pick.fixture.split(/ - /);
+  const [homeTeam, awayTeam] = pick.fixture.split(/ vs. /);
 
   return {
     // odd: pick.odd,
@@ -51,3 +57,4 @@ const normalizePick = (pick) => {
     
   }
 }
+

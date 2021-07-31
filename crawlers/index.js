@@ -10,6 +10,7 @@ const confirmBets = require('./confirmBets')
 const tips180 = require('./tips180')
 const tips1960 = require('./1960tips')
 const sportyTrader = require('./sportyTrader')
+const betblazers = require('./betBlazers')
 
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
@@ -63,6 +64,10 @@ const sites = [
     },
     {
       provider: 'SportyTrader',
+      crawlerImplementation: betblazers,
+    },
+    {
+      provider: 'BetBlazers',
       crawlerImplementation: sportyTrader,
     },
 ]
