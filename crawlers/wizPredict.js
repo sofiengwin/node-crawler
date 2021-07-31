@@ -1,45 +1,56 @@
-// const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 
-// (async () => {
-//     try {
-//       const browser = await puppeteer.launch({
-//         headless: false,
-//         args: ['--no-sandbox']
-//       })
-//       const page = await browser.newPage()
-      
-//       await page.goto('https://betgurushome.com/', {
-//         waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
-//         timeout: 100000
-//       });
-
-//       const tips = await page.evaluate(() => {
-//         let arr = document.querySelectorAll('.display-posts-listing .content table tbody').item(1).children;
-//         let picks = []
-//         for (let i = 1; i < arr.length; i++) {
-//             let pick = {}
-
-//             const home = arr.item(i).children[2].innerText;
-//             const away = arr.item(i).children[4].innerText;
-
-//             pick.fixture = `${home.trim()} vs ${away.trim()}`;
-//             pick.tip = arr.item(i).children[5].innerText;
-            
-//             //add odd
-//             // pick.odd = document.querySelectorAll('.entry-content tr')[i].children[3].innerText;
-//             if (pick.fixture) picks.push(pick);
-//         }
-//         return picks;
-//       })
-//       console.log(tips);
+module.exports = function () {
+  return new Promise((resolve, reject) => {
+    (async () => {
+        try {
+          const browser = await puppeteer.launch({
+            args: ['--no-sandbox']
+          })
+          const page = await browser.newPage()
+          
+          await page.goto('http://www.wizpredict.com/', {
+            waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
+          });
     
-//       await page.waitFor(1000)
+          const tips = await page.evaluate(() => {
+            let count = document.querySelectorAll('table.tg tbody tr').length;
+            let picks = []
+            for (let i = 0; i < count; i++) {
+                let pick = {}
+    
+                const home = document.querySelectorAll('table.tg tbody tr')[i].children[2].innerText;
+                const away = document.querySelectorAll('table.tg tbody tr')[i].children[3].innerText;
+    
+                pick.fixture = `${home.trim()} vs ${away.trim()}`
+                pick.tip = document.querySelectorAll('table.tg tbody tr')[i].children[4].innerText.trim();
+                
+                if (pick.fixture) picks.push(pick);
+            }
+            return picks;
+          })
+          console.log(tips);
+        
+          await page.waitFor(1000)
+    
+          await browser.close()
+    
+          resolve(tips.map((pick) => normalizePick(pick)))
+        } catch (error) {
+          reject(error);
+        }
+    })()
+  })
+}
 
-//       await browser.close()
+const normalizePick = (pick) => {
+  const [homeTeam, awayTeam] = pick.fixture.split(/ vs /);
 
-//     //   resolve(tips.map((pick) => normalizePick(pick)))
-//     } catch (error) {
-//     //   reject(error);
-//     console.log(error);
-//     }
-// })()
+  return {
+    // odd: pick.odd,
+    homeTeam,
+    awayTeam,
+    bet: pick.tip
+    
+  }
+}
