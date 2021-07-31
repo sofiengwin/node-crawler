@@ -29,9 +29,9 @@ module.exports = function () {
                 tip.replace("In 1st Half", "");
               }
 
-              pick.tip = tip;
+              pick.odd = tip;
               pick.accuracy = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[0].children[3].innerText.trim()
-              pick.odd = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[5].innerText.trim()
+              pick.tip = document.querySelectorAll('.top_ten_match_content table .table_td.pattern1')[i].children[5].innerText.trim()
               picks.push(pick)
           }
           return picks;

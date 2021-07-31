@@ -7,6 +7,10 @@ const betNumbers = require('./betNumbers');
 const soccerVista = require('./soccerVista');
 const olbg = require('./olbg');
 const confirmBets = require('./confirmBets')
+const tips180 = require('./tips180')
+const tips1960 = require('./1960tips')
+const sportyTrader = require('./sportyTrader')
+
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
@@ -48,6 +52,18 @@ const sites = [
     {
       provider: 'ConfirmBets',
       crawlerImplementation: confirmBets,
+    },
+    {
+      provider: 'Tips180',
+      crawlerImplementation: tips180,
+    },
+    {
+      provider: 'tips1960',
+      crawlerImplementation: tips1960,
+    },
+    {
+      provider: 'SportyTrader',
+      crawlerImplementation: sportyTrader,
     },
 ]
 console.log({today}, today.toDate())
