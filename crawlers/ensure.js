@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
-    ;(async () => {
+    (async () => {
       try {
         const browser = await puppeteer.launch({
           args: ['--no-sandbox']
@@ -14,14 +14,19 @@ module.exports = function () {
         });
         
         const ensuredPicks = await page.evaluate(() => {
-          let count = document.querySelectorAll("#today table tr").length;
+          let rows = document.querySelectorAll(".table.table-striped.expert-picks-table tbody").item(0).children;
           const picks = []
-          for (let j = 0; j < count; j++) {
+          
+          for (let j = 0; j < rows.length; j++) {
               let pick = {}
-              if (document.querySelectorAll("#today table tr")[j].children[0].textContent != '') {
-                  pick.fixture = document.querySelectorAll("#today table tr")[j].children[1].textContent
-                  pick.tip = document.querySelectorAll("#today table tr")[j].children[2].children[0].textContent
-                  picks.push(pick)
+
+              const row = rows[j].children[0] ? rows[j].children[0].innerText : '';
+              const tip = rows[j].children[1] ? rows[j].children[1].innerText : '';
+
+              if (row.split('\n')[1]) {
+                pick.fixture = row.split('\n')[1];
+                pick.tip = tip;
+                picks.push(pick)
               }
           }
         
@@ -42,7 +47,7 @@ module.exports = function () {
 }
 
 const normalizePick = (pick) => {
-  const [homeTeam, awayTeam] = pick.fixture.split(/vs/);
+  const [homeTeam, awayTeam] = pick.fixture.split(/ vs /);
 
   return {
     homeTeam,
