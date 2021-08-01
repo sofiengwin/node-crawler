@@ -152,7 +152,7 @@ const findFixtureByTeamId = (matchId) => {
 		// rapidApiClient(`/fixtures/id/${matchId}`)
 			.then(res => {
 				console.log(res);
-				if (res && res.fixtures.length == 0) resolve({});
+				if (!res && res.fixtures.length == 0) resolve({});
 				resolve(res.fixtures[0])
 			})
 	})

@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
-    ;(async () => {
+    (async () => {
       try {
         const browser = await puppeteer.launch({
           args: ['--no-sandbox']
@@ -14,29 +14,26 @@ module.exports = function () {
         });
 
         const OLGPicks = await page.evaluate(() => {
-          let rows = document.querySelector("#tipsListingContainer-Match tbody").children;
+          let rows = document.querySelectorAll("#tipsListingContainer-Match tbody tr").length;
           let picks = []
 
-          for (let i = 0; i < rows.length; i++) {
-            if (rows[i].classList.contains('tip-row', 'odds-row')) {
-              let pick = { }
-              let today = `${new Date(Date.now()).toDateString().split(' ')[1]} ${(Number(new Date(Date.now()).toDateString().split(' ')[2]) + 1).toString()}`;
-              let matchDay = rows[i].children[1].children[2].children[0].textContent.trim();
+          for (let i = 0; i < rows; i++) {
+            let pick = { }
 
-              if (today === matchDay) {
-                  pick.fixture = rows[i].children[1].children[0].textContent;
-                  pick.tip = rows[i].children[2].children[0].textContent.trim();
-                  pick.accuracy = rows[i].children[4].children[1].textContent.trim();
-                  //add odd
-                  pick.odd = rows[i].children[3].textContent.trim()
-              }
-              if (pick.fixture && pick.tip) {
-                  picks.push(pick);
-              }
+            const date = document.querySelectorAll("#tipsListingContainer-Match tbody tr")[i].children[2];
+
+            const splitted = date ? date.innerText.split('\n') : [ ];
+            
+            if (date && splitted[splitted.length - 1].includes('Today')) {
+              pick.fixture = splitted.find(i => i && i.includes('v'));
+              pick.tip = splitted[0];
+              picks.push(pick)
             }
           };
           return picks;
         })
+
+        console.log(OLGPicks);
       
         await page.waitFor(1000)
   
@@ -51,7 +48,7 @@ module.exports = function () {
 }
 
 const normalizePick = (pick) => {
-  const [homeTeam, awayTeam] = pick.fixture.split(/v/);
+  const [homeTeam, awayTeam] = pick.fixture.split(/ v /);
 
   return {
     odd: pick.odd,
