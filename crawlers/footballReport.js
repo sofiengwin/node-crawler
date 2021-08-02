@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 
 module.exports = function () {
   return new Promise((resolve, reject) => {
-    ;(async () => {
+    (async () => {
       try {
         const browser = await puppeteer.launch({
           args: ['--no-sandbox']
