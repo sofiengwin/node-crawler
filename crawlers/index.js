@@ -17,11 +17,12 @@ const wizPredict = require('./wizPredict')
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
-const {postFailure, postStartedCrawling, postSuccess} = require('../slack');
+const {addFailureMessage, addStartedCrawlingMessage, addSuccessMessage, postSingle} = require('../slack');
 const Sentry = require("../sentry");
 const {normalize} = require('../normalizer');
 
 const today = moment().startOf('day')
+const slackMessages = []
 
 const sites = [
     {
@@ -85,7 +86,7 @@ console.log({today}, today.toDate())
 const crawler = async () => {
   for(const providerImplemtation of sites) {
     const {provider, crawlerImplementation} = providerImplemtation;
-    await postStartedCrawling(provider)
+    slackMessages.push(addStartedCrawlingMessage(provider))
   
     log({provider, crawlerImplementation, ensure})
     const todayTipsByProvider = await Crawler.find({provider: provider, createdAt: {$gte: today.toDate()}});
@@ -98,14 +99,16 @@ const crawler = async () => {
     try { 
       tips = await crawlerImplementation();
     } catch (error) {
-      postFailure(provider);
+      slackMessages.push(addFailureMessage(provider));
       Sentry.captureException(error);
       continue;
     }
   
     await saveTips(tips, provider);
-    await postSuccess(provider, tips);
+    slackMessages.push(addSuccessMessage(provider, tips));
   }
+
+  await postSingle(slackMessages);
 }
 
 const saveTips = async (tips, provider) => {

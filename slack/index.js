@@ -54,6 +54,19 @@ const postReply = async (tip, parentId) => {
 
   await postMessage(message, parentId);
 }
+const postSingle = async (messages) => {
+  const message = [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": `${messages.join('\n')}`,
+      }
+    }
+  ];
+
+  await postMessage(message);
+}
 
 const postStartedCrawling = async (provider) => {
   const message = [
@@ -83,53 +96,16 @@ const postFailure = async (provider) => {
   await postMessage(message);
 }
 
+const addSuccessMessage = (provider, tips) => `Completed Crawling: *${provider}* Successfully :100: Found *${tips.length}* tips`;
+const addStartedCrawlingMessage = (provider) => `Started Crawling: *${provider}* :construction_worker:`
+const addFailureMessage = (provider) => `Started Crawling: *${provider}* :construction_worker:`
+
 module.exports = {
   postSuccess,
   postFailure,
   postStartedCrawling,
+  addSuccessMessage,
+  addStartedCrawlingMessage,
+  addFailureMessage,
+  postSingle,
 }
-
-const manageOutcomeMessage = `
-{
-	"type": "block_actions",
-	"user": {
-		"id": "U0CA5",
-		"username": "Amy McGee",
-		"name": "Amy McGee",
-		"team_id": "T3MDE"
-	},
-	"api_app_id": "A0CA5",
-	"token": "Shh_its_a_seekrit",
-	"container": {
-		"type": "message",
-		"text": "The contents of the original message where the action originated"
-	},
-	"trigger_id": "12466734323.1395872398",
-	"team": {
-		"id": "T0CAG",
-		"domain": "acme-creamery"
-	},
-	"response_url": "https://www.postresponsestome.com/T123567/1509734234",
-	"actions": [
-		{
-			"type": "static_select",
-			"block_id": "3or",
-			"action_id": "GghGF",
-			"selected_option": {
-				"text": {
-					"type": "plain_text",
-					"text": "Cancelled",
-					"emoji": true
-				},
-				"value": "cancelled-2872828282828829292929"
-			},
-			"placeholder": {
-				"type": "plain_text",
-				"text": "Manage Outcome",
-				"emoji": true
-			},
-			"action_ts": "1599052398.095316"
-		}
-	]
-}
-`
