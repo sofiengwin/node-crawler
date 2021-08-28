@@ -17,7 +17,7 @@ const wizPredict = require('./wizPredict')
 const Crawler = require('../database/crawlerModel')
 const moment = require('moment');
 const log = console.log
-const {addFailureMessage, addStartedCrawlingMessage, addSuccessMessage, postSingle} = require('../slack');
+const {addFailureMessage, addStartedCrawlingMessage, addSuccessMessage, postMessage} = require('../slack');
 const Sentry = require("../sentry");
 const {normalize} = require('../normalizer');
 
@@ -82,6 +82,7 @@ const sites = [
       crawlerImplementation: wizPredict,
     },
 ]
+
 console.log({today}, today.toDate())
 const crawler = async () => {
   for(const providerImplemtation of sites) {
@@ -108,7 +109,7 @@ const crawler = async () => {
     slackMessages.push(addSuccessMessage(provider, tips));
   }
 
-  await postSingle(slackMessages);
+  await postMessage(slackMessages);
 }
 
 const saveTips = async (tips, provider) => {

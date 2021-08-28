@@ -7,13 +7,12 @@ token = process.env.SLACK_TOKEN
 console.log({token })
 const web = new WebClient(token);
 
-const postMessage = async (message, parentId) => {
+const postMessage = async (blocks) => {
   try { 
     const result = await web.chat.postMessage({
       text: 'Started Crawling: *BetEnsured*',
       channel: "C017P7H4BQC",
-      blocks: message,
-      thread_ts: parentId,
+      blocks: blocks,
     });
 
     // The result contains an identifier for the message, `ts`.
@@ -24,88 +23,59 @@ const postMessage = async (message, parentId) => {
   }
 }
 
-const postSuccess = async (provider, tips) => {
-  const message = [
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `Completed Crawling: *${provider}* Successfully :100: Found *${tips.length}* tips`
-      }
+const addStartedCrawling = (provider) => {
+  return {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": `Started Crawling: *${provider}* :construction_worker:`
     }
-  ];
-
-  const response = await postMessage(message);
-  for(const tip of tips) {
-    await postReply(tip, response.ts)
   }
 }
 
-const postReply = async (tip, parentId) => {
-  const message = [
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `${tip.homeTeam} vs ${tip.awayTeam}`,
-      }
+const addFailure = (provider) => {
+  return {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": `Failed To Crawl: *${provider}* :imp:`
     }
-  ];
-
-  await postMessage(message, parentId);
-}
-const postSingle = async (messages) => {
-  const message = [
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `${messages.join('\n')}`,
-      }
-    }
-  ];
-
-  await postMessage(message);
+  }
 }
 
-const postStartedCrawling = async (provider) => {
-  const message = [
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `Started Crawling: *${provider}* :construction_worker:`
-      }
+const addSuccessMessage = (provider, tips) => {
+  const message = {
+    "type": "section",
+    "text": {
+      "type": "mrkdwn",
+      "text": `Completed Crawling: *${provider}* Successfully :100: Found *${tips.length}* tips \n ${tips.map((tip, index) => `${index + 1}. *${tip.homeTeam} vs ${tip.awayTeam}*`).join("\n")}`
     }
-  ];
+  }
 
-  await postMessage(message);
+  return message;
 }
+const blocks = []
+const providers = [
+  'facebook',
+  'youtube',
+  'amazon',
+  'netflix',
+]
 
-const postFailure = async (provider) => {
-  const message = [
-    {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": `Failed To Crawl: *${provider}* :imp:`
-      }
-    }
-  ];
-
-  await postMessage(message);
-}
-
-const addSuccessMessage = (provider, tips) => `Completed Crawling: *${provider}* Successfully :100: Found *${tips.length}* tips`;
-const addStartedCrawlingMessage = (provider) => `Started Crawling: *${provider}* :construction_worker:`
-const addFailureMessage = (provider) => `Started Crawling: *${provider}* :construction_worker:`
+const tips = [
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+  {homeTeam: 'Man Utd', awayTeam: 'Chelsea'},
+]
 
 module.exports = {
-  postSuccess,
-  postFailure,
-  postStartedCrawling,
+  addFailure,
+  addStartedCrawling,
   addSuccessMessage,
-  addStartedCrawlingMessage,
-  addFailureMessage,
-  postSingle,
+  postMessage
 }
